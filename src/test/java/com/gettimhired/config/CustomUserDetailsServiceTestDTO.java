@@ -1,7 +1,7 @@
 package com.gettimhired.config;
 
 import com.gettimhired.TestHelper;
-import com.gettimhired.model.mongo.User;
+import com.gettimhired.model.dto.UserDTO;
 import com.gettimhired.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Collections;
 import java.util.Optional;
 
-class CustomUserDetailsServiceTest {
+class CustomUserDetailsServiceTestDTO {
 
     private CustomUserDetailsService customUserDetailsService;
     private UserService userService;
@@ -25,7 +25,7 @@ class CustomUserDetailsServiceTest {
 
     @Test
     public void testUserDetailsServiceHappy() {
-        var userOpt = Optional.of(new User(TestHelper.ID, "BARK_PASSWORD", "email", "password", Collections.emptyList()));
+        var userOpt = Optional.of(new UserDTO(TestHelper.ID, "BARK_PASSWORD", "email", "password", Collections.emptyList()));
         Mockito.when(userService.findUserByUsername("BARK")).thenReturn(userOpt);
 
         var userDetails = customUserDetailsService.loadUserByUsername("BARK");
@@ -39,7 +39,7 @@ class CustomUserDetailsServiceTest {
 
     @Test
     public void testUserDetailsServiceUserNotFound() {
-        Optional<User> userOpt = Optional.empty();
+        Optional<UserDTO> userOpt = Optional.empty();
         Mockito.when(userService.findUserByUsername("BARK")).thenReturn(userOpt);
 
         Assertions.assertThrows(UsernameNotFoundException.class, () -> customUserDetailsService.loadUserByUsername("BARK"));

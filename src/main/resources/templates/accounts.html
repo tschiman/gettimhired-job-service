@@ -7,7 +7,7 @@
 </head>
 <body>
 <!--    I want to have something where there is a form with no input that submits to a page
-that comes back here with two UUIDs that are displayed as the user credentials-->
+that comes back here with two UUIDs that are displayed as the userDTO credentials-->
   <div class="container">
     <div th:insert="~{navbar}"></div>
     <div th:unless="${password}">
@@ -21,7 +21,7 @@ that comes back here with two UUIDs that are displayed as the user credentials--
           <span><strong>USER_ID:</strong></span>
         </div>
         <div class="col-md-10">
-          <span th:text="${user}"></span>
+          <span th:text="${userDTO}"></span>
         </div>
         <div class="col-md-2">
           <span><strong>EMAIL:</strong></span>
@@ -40,7 +40,7 @@ that comes back here with two UUIDs that are displayed as the user credentials--
       </div>
     </div>
     <div th:if="${password}">
-      <div class="row" th:if="${user}">
+      <div class="row" th:if="${userDTO}">
         <div class="col-md-12">
           <h1>Save Credentials</h1>
         </div>
@@ -48,7 +48,7 @@ that comes back here with two UUIDs that are displayed as the user credentials--
           <span><strong>USER_ID:</strong></span>
         </div>
         <div class="col-md-10">
-          <span th:text="${user}"></span>
+          <span th:text="${userDTO}"></span>
         </div>
         <div class="col-md-2">
           <span><strong>USER_PASSWORD:</strong></span>

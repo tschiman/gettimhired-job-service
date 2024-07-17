@@ -13,10 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final FormUserDetailsService formUserDetailsService;
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, FormUserDetailsService formUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.formUserDetailsService = formUserDetailsService;
     }
 
     @Bean
@@ -28,6 +26,8 @@ public class SecurityConfig {
                 .securityMatchers(matchers -> {
                     matchers.requestMatchers("/api/**");
                     matchers.requestMatchers("/graphql");
+                    matchers.requestMatchers("/swagger-ui/**");
+                    matchers.requestMatchers("/");
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(basic -> basic.init(http))
@@ -36,32 +36,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/api/**").authenticated();
                     authorize.requestMatchers("/graphql").authenticated();
+                    authorize.requestMatchers("/swagger-ui/**").permitAll();
+                    authorize.requestMatchers("/").permitAll();
                 })
                 .userDetailsService(customUserDetailsService)
-                .build();
-    }
-
-    @Bean
-    @Order(1)
-    @Profile("!local")
-    public SecurityFilterChain filterChainForm(HttpSecurity http) throws Exception {
-        return http
-                .requiresChannel(channel ->
-                        channel.anyRequest().requiresSecure())
-                .formLogin(formLogin -> {
-                    formLogin.defaultSuccessUrl("/account");
-                })
-                .logout(logout -> {
-                    logout.logoutSuccessUrl("/");
-                })
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/account").authenticated();
-                    authorize.requestMatchers("/postman").authenticated();
-                    authorize.requestMatchers("/swagger-ui/**").authenticated();
-                    authorize.anyRequest().permitAll();
-                })
-                .userDetailsService(formUserDetailsService)
                 .build();
     }
 
@@ -73,6 +51,8 @@ public class SecurityConfig {
                 .securityMatchers(matchers -> {
                     matchers.requestMatchers("/api/**");
                     matchers.requestMatchers("/graphql");
+                    matchers.requestMatchers("/swagger-ui/**");
+                    matchers.requestMatchers("/");
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(basic -> basic.init(http))
@@ -81,31 +61,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/api/**").authenticated();
                     authorize.requestMatchers("/graphql").authenticated();
+                    authorize.requestMatchers("/swagger-ui/**").permitAll();
+                    authorize.requestMatchers("/").permitAll();
                 })
                 .userDetailsService(customUserDetailsService)
-                .build();
-    }
-
-    @Bean
-    @Order(1)
-    @Profile("local")
-    public SecurityFilterChain filterChainLocalForm(HttpSecurity http) throws Exception {
-        return http
-                .formLogin(formLogin -> {
-                    formLogin.defaultSuccessUrl("/account");
-                    formLogin.loginPage("/login");
-                })
-                .logout(logout -> {
-                    logout.logoutSuccessUrl("/");
-                })
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/account").authenticated();
-                    authorize.requestMatchers("/postman").authenticated();
-                    authorize.requestMatchers("/swagger-ui/**").authenticated();
-                    authorize.anyRequest().permitAll();
-                })
-                .userDetailsService(formUserDetailsService)
                 .build();
     }
 }

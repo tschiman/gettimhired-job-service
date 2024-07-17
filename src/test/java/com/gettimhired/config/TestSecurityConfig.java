@@ -2,8 +2,6 @@ package com.gettimhired.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,6 +23,8 @@ public class TestSecurityConfig {
                 .securityMatchers(matchers -> {
                     matchers.requestMatchers("/api/**");
                     matchers.requestMatchers("/graphql");
+                    matchers.requestMatchers("/swagger-ui/**");
+                    matchers.requestMatchers("/");
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(basic -> basic.init(http))
@@ -33,30 +33,12 @@ public class TestSecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/api/**").authenticated();
                     authorize.requestMatchers("/graphql").authenticated();
+                    authorize.requestMatchers("/swagger-ui/**").permitAll();
+                    authorize.requestMatchers("/").permitAll();
                     authorize.anyRequest().permitAll();
                 })
                 .userDetailsService(userDetailsService())
                 .build();
-    }
-
-    @Bean
-    @Order(1)
-    @Profile("local")
-    public SecurityFilterChain filterChainLocalForm(HttpSecurity http) throws Exception {
-        return http
-                .formLogin(formLogin -> {
-                    formLogin.defaultSuccessUrl("/account");
-                })
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/account").authenticated();
-                    authorize.requestMatchers("/postman").authenticated();
-                    authorize.requestMatchers("/swagger-ui/**").authenticated();
-                    authorize.anyRequest().permitAll();
-                })
-                .userDetailsService(userDetailsService())
-                .build();
-        // ...
     }
 
     @Bean

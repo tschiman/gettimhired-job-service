@@ -1,8 +1,6 @@
 package com.gettimhired.config;
 
-import com.gettimhired.model.mongo.Candidate;
 import com.gettimhired.model.mongo.ChangeSet;
-import com.gettimhired.model.mongo.Education;
 import com.gettimhired.model.mongo.Job;
 import com.gettimhired.repository.ChangeSetRepository;
 import jakarta.annotation.PostConstruct;
@@ -29,36 +27,6 @@ public class MongoSchemaManager {
         doChangeSet(
                 "changeset-001",
                 "tim.schimandle",
-                "add index to Education userId and candidateId",
-                () -> {
-                    var index = new Index()
-                            .on("userId", Sort.Direction.ASC).on("candidateId", Sort.Direction.ASC).background();
-                    mongoTemplate.indexOps(Education.class).ensureIndex(index);
-                    }
-                );
-        doChangeSet(
-                "changeset-002",
-                "tim.schimandle",
-                "add Education index to candidateId",
-                () -> {
-                    var index = new Index()
-                            .on("candidateId", Sort.Direction.ASC).background();
-                    mongoTemplate.indexOps(Education.class).ensureIndex(index);
-                }
-        );
-        doChangeSet(
-                "changeset-003",
-                "tim.schimandle",
-                "add Education index to userId",
-                () -> {
-                    var index = new Index()
-                            .on("userId", Sort.Direction.ASC).background();
-                    mongoTemplate.indexOps(Education.class).ensureIndex(index);
-                }
-        );
-        doChangeSet(
-                "changeset-004",
-                "tim.schimandle",
                 "add job index to userId and candidateId",
                 () -> {
                     var index = new Index()
@@ -67,7 +35,7 @@ public class MongoSchemaManager {
                 }
         );
         doChangeSet(
-                "changeset-005",
+                "changeset-002",
                 "tim.schimandle",
                 "add job index to candidateId",
                 () -> {
@@ -77,23 +45,13 @@ public class MongoSchemaManager {
                 }
         );
         doChangeSet(
-                "changeset-006",
+                "changeset-003",
                 "tim.schimandle",
                 "add job index to userId",
                 () -> {
                     var index = new Index()
                             .on("userId", Sort.Direction.ASC).background();
                     mongoTemplate.indexOps(Job.class).ensureIndex(index);
-                }
-        );
-        doChangeSet(
-                "changeset-007",
-                "tim.schimandle",
-                "add candidate index to userId",
-                () -> {
-                    var index = new Index()
-                            .on("userId", Sort.Direction.ASC).background();
-                    mongoTemplate.indexOps(Candidate.class).ensureIndex(index);
                 }
         );
     }
