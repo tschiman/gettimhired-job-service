@@ -3,6 +3,7 @@ package com.gettimhired.config;
 import com.gettimhired.model.mongo.ChangeSet;
 import com.gettimhired.model.mongo.Job;
 import com.gettimhired.repository.ChangeSetRepository;
+import com.gettimhired.service.JobService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,12 @@ public class MongoSchemaManager {
     private final MongoTemplate mongoTemplate;
     private final ChangeSetRepository changeSetRepository;
 
-    public MongoSchemaManager(MongoTemplate mongoTemplate, ChangeSetRepository changeSetRepository) {
+    private final JobService jobService;
+
+    public MongoSchemaManager(MongoTemplate mongoTemplate, ChangeSetRepository changeSetRepository, JobService jobService) {
         this.mongoTemplate = mongoTemplate;
         this.changeSetRepository = changeSetRepository;
+        this.jobService = jobService;
     }
 
     @PostConstruct
@@ -53,6 +57,12 @@ public class MongoSchemaManager {
                             .on("userId", Sort.Direction.ASC).background();
                     mongoTemplate.indexOps(Job.class).ensureIndex(index);
                 }
+        );
+        doChangeSet(
+                "changeset-004",
+                "tim.schimandle",
+                "migrate jobs from resume-site",
+                jobService::migrateJobs
         );
     }
 

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +20,11 @@ public class JobService {
 
     Logger log = LoggerFactory.getLogger(JobService.class);
     private final JobRepository jobRepository;
+    private final RestClient resumeSiteRestClient;
 
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository, RestClient resumeSiteRestClient) {
         this.jobRepository = jobRepository;
+        this.resumeSiteRestClient = resumeSiteRestClient;
     }
 
     public List<JobDTO> findAllJobsForUserAndCandidateId(String userId, String candidateId) {
@@ -115,5 +118,30 @@ public class JobService {
                     }
                     return j2.endDate().compareTo(j1.endDate());
                 }).toList();
+    }
+
+    public void migrateJobs() {
+        var jobDtos = resumeSiteRestClient.get()
+                .uri("/api/candidates/all/jobs/migrate")
+                .retrieve()
+                .body(JobDTO[].class);
+
+        if (jobDtos != null) {
+            for (JobDTO jobDto : jobDtos) {
+                jobRepository.save(new Job(
+                        jobDto.id(),
+                        jobDto.userId(),
+                        jobDto.candidateId(),
+                        jobDto.companyName(),
+                        jobDto.title(),
+                        jobDto.startDate(),
+                        jobDto.endDate(),
+                        jobDto.skills(),
+                        jobDto.achievements(),
+                        jobDto.currentlyWorking(),
+                        jobDto.reasonForLeaving()
+                ));
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.gettimhired.repository.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,11 +27,13 @@ class JobServiceTest {
 
     private JobService jobService;
     private JobRepository jobRepository;
+    private RestClient restClient;
 
     @BeforeEach
     public void init() {
         jobRepository = mock(JobRepository.class);
-        jobService = new JobService(jobRepository);
+        restClient = mock(RestClient.class);
+        jobService = new JobService(jobRepository, restClient);
     }
 
     @Test
