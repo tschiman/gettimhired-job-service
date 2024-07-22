@@ -9,10 +9,18 @@ import org.springframework.web.client.RestClient;
 public class RestConfig {
 
     @Value("${resumejobservice.mainapp.host}")
-    private String host;
+    private String mainAppHost;
+
+    @Value("${resumejobservice.userservice.host}")
+    private String userServiceHost;
 
     @Bean
     RestClient resumeSiteRestClient() {
-        return RestClient.builder().baseUrl(host).build();
+        return RestClient.builder().baseUrl(mainAppHost).build();
+    }
+
+    @Bean
+    RestClient userServiceRestClient() {
+        return RestClient.builder().baseUrl(userServiceHost).build();
     }
 }
