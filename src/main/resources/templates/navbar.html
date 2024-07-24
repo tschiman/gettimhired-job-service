@@ -1,10 +1,6 @@
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/">Home</a>
-        <a class="navbar-brand" th:if="${#authorization.expression('isAuthenticated()')}" href="/swagger-ui.html">Swagger</a>
-            <div>
-                <button class="btn btn-default" type="submit">Logout</button>
-            </div>
-        </form>
+        <a class="navbar-brand" href="/swagger-ui.html">Swagger</a>
     </nav>
 </div>
