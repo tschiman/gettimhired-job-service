@@ -53,7 +53,9 @@ class JobAPIIT {
         when(userDetails.getUsername()).thenReturn("user1");
         when(jobService.findAllJobsForUserAndCandidateId("user1", candidateId)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/candidates/{candidateId}/jobs", candidateId))
+        mockMvc.perform(get("/api/candidates/{candidateId}/jobs", candidateId)
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
 
@@ -69,7 +71,9 @@ class JobAPIIT {
         when(userDetails.getUsername()).thenReturn("user1");
         when(jobService.findJobByIdAndUserId(jobId, "user1")).thenReturn(Optional.of(jobDTO));
 
-        mockMvc.perform(get("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId))
+        mockMvc.perform(get("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId)
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
 
@@ -84,7 +88,9 @@ class JobAPIIT {
         when(userDetails.getUsername()).thenReturn("user1");
         when(jobService.findJobByIdAndUserId(jobId, "user1")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId))
+        mockMvc.perform(get("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId)
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isNotFound());
 
         verify(jobService, times(1)).findJobByIdAndUserId(jobId, "user1");
@@ -114,6 +120,7 @@ class JobAPIIT {
                                 "    \"currentlyWorking\": true,\n" +
                                 "    \"reasonForLeaving\": \"Test\"\n" +
                                 "}")
+                        .queryParam("userId", "user1")
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
@@ -143,7 +150,9 @@ class JobAPIIT {
                                 "    ],\n" +
                                 "    \"currentlyWorking\": true,\n" +
                                 "    \"reasonForLeaving\": \"Test\"\n" +
-                                "}"))
+                                "}")
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isInternalServerError());
 
         verify(jobService, times(1)).createJob(eq("user1"), eq(candidateId), any(JobDTO.class));
@@ -173,7 +182,9 @@ class JobAPIIT {
                                 "    ],\n" +
                                 "    \"currentlyWorking\": true,\n" +
                                 "    \"reasonForLeaving\": \"Test\"\n" +
-                                "}"))
+                                "}")
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
 
@@ -203,7 +214,9 @@ class JobAPIIT {
                                 "    ],\n" +
                                 "    \"currentlyWorking\": true,\n" +
                                 "    \"reasonForLeaving\": \"Test\"\n" +
-                                "}"))
+                                "}")
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isInternalServerError());
 
         verify(jobService, times(1)).updateJob(eq(jobId), eq("user1"), eq(candidateId), any(JobUpdateDTO.class));
@@ -232,7 +245,9 @@ class JobAPIIT {
                                 "    ],\n" +
                                 "    \"currentlyWorking\": true,\n" +
                                 "    \"reasonForLeaving\": \"Test\"\n" +
-                                "}"))
+                                "}")
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isForbidden());
 
         verify(jobService, times(1)).updateJob(eq(jobId), eq("user1"), eq(candidateId), any(JobUpdateDTO.class));
@@ -246,7 +261,9 @@ class JobAPIIT {
         when(userDetails.getUsername()).thenReturn("user1");
         when(jobService.deleteJob(eq(jobId), eq("user1"))).thenReturn(true);
 
-        mockMvc.perform(delete("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId))
+        mockMvc.perform(delete("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId)
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isOk());
 
         verify(jobService, times(1)).deleteJob(eq(jobId), eq("user1"));
@@ -260,7 +277,9 @@ class JobAPIIT {
         when(userDetails.getUsername()).thenReturn("user1");
         when(jobService.deleteJob(eq(jobId), eq("user1"))).thenReturn(false);
 
-        mockMvc.perform(delete("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId))
+        mockMvc.perform(delete("/api/candidates/{candidateId}/jobs/{id}", candidateId, jobId)
+                        .queryParam("userId", "user1")
+                )
                 .andExpect(status().isInternalServerError());
 
         verify(jobService, times(1)).deleteJob(eq(jobId), eq("user1"));

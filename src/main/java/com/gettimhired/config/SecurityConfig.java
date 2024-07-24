@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -39,6 +40,7 @@ public class SecurityConfig {
                     authorize.requestMatchers("/swagger-ui/**").permitAll();
                     authorize.requestMatchers("/").permitAll();
                 })
+                .addFilterBefore(authorizationHeaderFilter(), BasicAuthenticationFilter.class)
                 .userDetailsService(customUserDetailsService)
                 .build();
     }
@@ -64,7 +66,13 @@ public class SecurityConfig {
                     authorize.requestMatchers("/swagger-ui/**").permitAll();
                     authorize.requestMatchers("/").permitAll();
                 })
+                .addFilterBefore(authorizationHeaderFilter(), BasicAuthenticationFilter.class)
                 .userDetailsService(customUserDetailsService)
                 .build();
+    }
+
+    @Bean
+    public AuthorizationHeaderFilter authorizationHeaderFilter() {
+        return new AuthorizationHeaderFilter();
     }
 }

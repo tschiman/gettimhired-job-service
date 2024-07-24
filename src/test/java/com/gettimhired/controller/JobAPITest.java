@@ -35,16 +35,14 @@ class JobAPITest {
 
     @Test
     public void testGetAllJobsHappy() {
-        when(userDetails.getUsername()).thenReturn(USER_ID);
         when(jobService
                 .findAllJobsForUserAndCandidateId(
                         USER_ID,
                         CANDIDATE_ID))
                 .thenReturn(new ArrayList<>());
 
-        var result = jobApi.getAllJobs(userDetails, CANDIDATE_ID);
+        var result = jobApi.getAllJobs(userDetails, CANDIDATE_ID, USER_ID);
 
-        verify(userDetails, times(2)).getUsername();
         verify(jobService, times(1))
                 .findAllJobsForUserAndCandidateId(
                         USER_ID,
@@ -57,12 +55,10 @@ class JobAPITest {
     @Test
     public void testGetJobByIdHappy() {
         var jobDto = getJobDto();
-        when(userDetails.getUsername()).thenReturn(USER_ID);
         when(jobService.findJobByIdAndUserId(ID, USER_ID)).thenReturn(Optional.of(jobDto));
 
-        var result = jobApi.getJobById(userDetails, ID, CANDIDATE_ID);
+        var result = jobApi.getJobById(userDetails, ID, CANDIDATE_ID, USER_ID);
 
-        verify(userDetails, times(2)).getUsername();
         verify(jobService, times(1)).findJobByIdAndUserId(ID, USER_ID);
         assertNotNull(result);
         assertEquals(HttpStatusCode.valueOf(200), result.getStatusCode());
@@ -71,12 +67,10 @@ class JobAPITest {
 
     @Test
     public void testGetJobByIdNOtFound() {
-        when(userDetails.getUsername()).thenReturn(USER_ID);
         when(jobService.findJobByIdAndUserId(ID, USER_ID)).thenReturn(Optional.empty());
 
-        var result = jobApi.getJobById(userDetails, ID, CANDIDATE_ID);
+        var result = jobApi.getJobById(userDetails, ID, CANDIDATE_ID, USER_ID);
 
-        verify(userDetails, times(2)).getUsername();
         verify(jobService, times(1)).findJobByIdAndUserId(ID, USER_ID);
         assertNotNull(result);
         assertEquals(HttpStatusCode.valueOf(404), result.getStatusCode());
@@ -85,12 +79,10 @@ class JobAPITest {
     @Test
     public void testCreateJobHappy() {
         var jobDto = getJobDto();
-        when(userDetails.getUsername()).thenReturn(USER_ID);
         when(jobService.createJob(USER_ID, CANDIDATE_ID, jobDto)).thenReturn(Optional.of(jobDto));
 
-        var result = jobApi.createJob(userDetails, jobDto, CANDIDATE_ID);
+        var result = jobApi.createJob(userDetails, jobDto, CANDIDATE_ID, USER_ID);
 
-        verify(userDetails, times(2)).getUsername();
         verify(jobService, times(1)).createJob(USER_ID, CANDIDATE_ID, jobDto);
         assertNotNull(result);
         assertEquals(HttpStatusCode.valueOf(200), result.getStatusCode());
@@ -100,12 +92,10 @@ class JobAPITest {
     @Test
     public void testCreateJobFailed() {
         var jobDto = getJobDto();
-        when(userDetails.getUsername()).thenReturn(USER_ID);
         when(jobService.createJob(USER_ID, CANDIDATE_ID, jobDto)).thenReturn(Optional.empty());
 
-        var result = jobApi.createJob(userDetails, jobDto, CANDIDATE_ID);
+        var result = jobApi.createJob(userDetails, jobDto, CANDIDATE_ID, USER_ID);
 
-        verify(userDetails, times(2)).getUsername();
         verify(jobService, times(1)).createJob(USER_ID, CANDIDATE_ID, jobDto);
         assertNotNull(result);
         assertEquals(HttpStatusCode.valueOf(500), result.getStatusCode());
@@ -121,7 +111,7 @@ class JobAPITest {
                 .thenReturn(Optional.of(updatedJobDTO));
 
 
-        var response = jobApi.updateJob(userDetails, jobUpdateDTO, ID, CANDIDATE_ID);
+        var response = jobApi.updateJob(userDetails, jobUpdateDTO, ID, CANDIDATE_ID, USER_ID);
 
 
         assertNotNull(response);
@@ -138,7 +128,7 @@ class JobAPITest {
                 .thenReturn(Optional.empty());
 
 
-        var response = jobApi.updateJob(userDetails, jobUpdateDTO, ID, CANDIDATE_ID);
+        var response = jobApi.updateJob(userDetails, jobUpdateDTO, ID, CANDIDATE_ID, USER_ID);
 
 
         assertNotNull(response);
@@ -156,7 +146,7 @@ class JobAPITest {
                 .thenThrow(apiUpdateException);
 
 
-        var response = jobApi.updateJob(userDetails, jobUpdateDTO, ID, CANDIDATE_ID);
+        var response = jobApi.updateJob(userDetails, jobUpdateDTO, ID, CANDIDATE_ID, USER_ID);
 
 
         assertNotNull(response);
@@ -172,7 +162,7 @@ class JobAPITest {
                 .thenReturn(true);
 
 
-        var response = jobApi.deleteJob(userDetails, ID, CANDIDATE_ID);
+        var response = jobApi.deleteJob(userDetails, ID, CANDIDATE_ID, USER_ID);
 
 
         assertNotNull(response);
@@ -188,7 +178,7 @@ class JobAPITest {
                 .thenReturn(false);
 
 
-        var response = jobApi.deleteJob(userDetails, ID, CANDIDATE_ID);
+        var response = jobApi.deleteJob(userDetails, ID, CANDIDATE_ID, USER_ID);
 
 
         assertNotNull(response);

@@ -33,12 +33,13 @@ public class JobAPI {
     @PreAuthorize("isAuthenticated()")
     public List<JobDTO> getAllJobs(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable String candidateId
+            @PathVariable String candidateId,
+            @RequestParam String userId
     ) {
-        log.info("GET /api/candidates/{candidateId}/jobs getAllJobs userId={} candidateId={}", userDetails.getUsername(), candidateId);
+        log.info("GET /api/candidates/{candidateId}/jobs getAllJobs userId={} candidateId={}", userId, candidateId);
         return jobService
                 .findAllJobsForUserAndCandidateId(
-                        userDetails.getUsername(),
+                        userId,
                         candidateId
                 );
     }
@@ -48,10 +49,11 @@ public class JobAPI {
     public ResponseEntity<JobDTO> getJobById(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String id,
-            @PathVariable String candidateId
+            @PathVariable String candidateId,
+            @RequestParam String userId
     ) {
-        log.info("GET /api/candidates/{candidateId}/jobs/{id} getAllJobs userId={} candidateId={} id={}", userDetails.getUsername(), candidateId, id);
-        var jobOpt = jobService.findJobByIdAndUserId(id, userDetails.getUsername());
+        log.info("GET /api/candidates/{candidateId}/jobs/{id} getAllJobs userId={} candidateId={} id={}", userId, candidateId, id);
+        var jobOpt = jobService.findJobByIdAndUserId(id, userId);
         return jobOpt
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
@@ -62,10 +64,11 @@ public class JobAPI {
     public ResponseEntity<JobDTO> createJob(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid JobDTO jobDTO,
-            @PathVariable String candidateId
+            @PathVariable String candidateId,
+            @RequestParam String userId
     ) {
-        log.info("POST /api/candidates/{candidateId}/jobs createJob userId={} candidateId={}", userDetails.getUsername(), candidateId);
-        var jobDtoOpt = jobService.createJob(userDetails.getUsername(), candidateId, jobDTO);
+        log.info("POST /api/candidates/{candidateId}/jobs createJob userId={} candidateId={}", userId, candidateId);
+        var jobDtoOpt = jobService.createJob(userId, candidateId, jobDTO);
         return jobDtoOpt
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
@@ -77,11 +80,12 @@ public class JobAPI {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody @Valid JobUpdateDTO jobUpdateDTO,
             @PathVariable String id,
-            @PathVariable String candidateId
+            @PathVariable String candidateId,
+            @RequestParam String userId
     ) {
-        log.info("PUT /api/candidates/{candidateId}/jobs/{id} updateJob userId={} candidateId={} id={}", userDetails.getUsername(), candidateId, id);
+        log.info("PUT /api/candidates/{candidateId}/jobs/{id} updateJob userId={} candidateId={} id={}", userId, candidateId, id);
         try {
-            var jobDtoOpt = jobService.updateJob(id, userDetails.getUsername(), candidateId, jobUpdateDTO);
+            var jobDtoOpt = jobService.updateJob(id, userId, candidateId, jobUpdateDTO);
             return jobDtoOpt
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
@@ -95,10 +99,11 @@ public class JobAPI {
     public ResponseEntity deleteJob(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String id,
-            @PathVariable String candidateId
+            @PathVariable String candidateId,
+            @RequestParam String userId
     ) {
-        log.info("DELETE /api/candidates/{candidateId}/jobs/{id} deleteJob userId={} candidateId={} id={}", userDetails.getUsername(), candidateId, id);
-        boolean result = jobService.deleteJob(id, userDetails.getUsername());
+        log.info("DELETE /api/candidates/{candidateId}/jobs/{id} deleteJob userId={} candidateId={} id={}", userId, candidateId, id);
+        boolean result = jobService.deleteJob(id, userId);
         return result ?
                 ResponseEntity.ok().build() :
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
