@@ -104,6 +104,16 @@ public class JobService {
         }
     }
 
+    public boolean deleteAllJobsForCandidateIdAndUserId(String candidateId, String userId) {
+        try {
+            jobRepository.deleteByCandidateIdAndUserId(candidateId, userId);
+            return true;
+        } catch (Exception e) {
+            log.error("deleteAllJobsForCandidateIdAndUserId userId={} candidateId={}", userId, candidateId, e);
+            return false;
+        }
+    }
+
     public List<JobDTO> findAllJobsByCandidateId(String candidateId) {
         return jobRepository.findAllByCandidateId(candidateId)
                 .stream().sorted((j1, j2) -> {

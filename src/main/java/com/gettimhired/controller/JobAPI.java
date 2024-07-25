@@ -108,4 +108,17 @@ public class JobAPI {
                 ResponseEntity.ok().build() :
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    @DeleteMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity deleteAllJobsForUserId(
+            @PathVariable String candidateId,
+            @RequestParam String userId
+    ) {
+        log.info("DELETE /api/candidates/{candidateId}/jobs deleteAllJobsForUserId userId={} candidateId={}", userId, candidateId);
+        boolean result = jobService.deleteAllJobsForCandidateIdAndUserId(candidateId, userId);
+        return result ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }

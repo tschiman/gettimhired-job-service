@@ -16,5 +16,5 @@ public interface JobRepository extends MongoRepository<Job, String> {
 
     List<JobDTO> findAllByCandidateId(String candidateId);
 
-    void deleteByUserId(String userId);
+    void deleteByCandidateIdAndUserId(String candidateId, String userId);
 }
